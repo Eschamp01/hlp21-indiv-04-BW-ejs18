@@ -20,3 +20,7 @@ given (CommonTypes.InputPortId * CommonTypes.OutputPortId), render a wire of the
 - [ ] Call interfacing function with symbol (portIds : (CommonTypes.InputPortId * CommonTypes.OutputPortId)) -> (portPositions : (XYPos * XYPos))
 - [ ] Given coordinates of ports, generate vertices (portPositions : (XYPos * XYPos)) -> (vertices : (float * float) list)
 - [ ] Given vertices, render the line segments for the line
+
+#### DeleteWire functionality
+
+#### Defining Wire dataType, and conversion function from Issie Connection type -> Wire type
