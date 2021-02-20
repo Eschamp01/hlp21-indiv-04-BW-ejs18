@@ -17,6 +17,6 @@ BusWire changes the colour of the given wire.
 #### AddWire functionality
 given (CommonTypes.InputPortId * CommonTypes.OutputPortId), render a wire of the correct shape.
 
-- [ ] Call interfacing function with symbol (portIds : (CommonTypes.InputPortId * CommonTypes.OutputPortId)) -> (portPos : (XYPos * XYPos))
-- [ ] Given coordinates of ports, generate vertices (portPos : (XYPos * XYPos)) -> (vertices : (float * float) list)
+- [ ] Call interfacing function with symbol (portIds : (CommonTypes.InputPortId * CommonTypes.OutputPortId)) -> (portPositions : (XYPos * XYPos))
+- [ ] Given coordinates of ports, generate vertices (portPositions : (XYPos * XYPos)) -> (vertices : (float * float) list)
 - [ ] Given vertices, render the line segments for the line
