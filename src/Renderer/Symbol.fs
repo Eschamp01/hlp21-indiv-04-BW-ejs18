@@ -24,6 +24,7 @@ type Symbol =
         LastDragPos : XYPos
         IsDragging : bool
         Id : CommonTypes.ComponentId
+        //Component : CommonTypes.Component
     }
 
 
@@ -77,12 +78,14 @@ let createNewSymbol (pos:XYPos) =
         LastDragPos = {X=0. ; Y=0.} // initial value can always be this
         IsDragging = false // initial value can always be this
         Id = CommonTypes.ComponentId (Helpers.uuid()) // create a unique id for this symbol
+        //Component = FILL IN LATER
     }
 
 
 /// Dummy function for test. The real init would probably have no symbols.
 let init () =
-    List.allPairs [1..14] [1..14]
+    let testOneList = [(3,3);(11,11)]//List.allPairs [1..14] [1..14]
+    testOneList
     |> List.map (fun (x,y) -> {X = float (x*64+30); Y=float (y*64+30)})
     |> List.map createNewSymbol
     , Cmd.none
