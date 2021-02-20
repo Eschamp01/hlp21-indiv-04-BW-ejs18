@@ -1,4 +1,4 @@
-# HLP Project documentation
+# HLP Group Meetings
 
 ## Meeting 1: 15/02/20
 
