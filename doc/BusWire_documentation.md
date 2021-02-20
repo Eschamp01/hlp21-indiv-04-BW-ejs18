@@ -14,7 +14,7 @@ This is left for later, note that the movement of a wire can be both due to a wi
 BusWire changes the colour of the given wire.
 
 
-## AddWire functionality
+#### AddWire functionality
 given (CommonTypes.InputPortId * CommonTypes.OutputPortId), render a wire of the correct shape.
 
 - [ ] Call interfacing function with symbol (portIds : (CommonTypes.InputPortId * CommonTypes.OutputPortId)) -> (portPos : (XYPos * XYPos))
