@@ -24,3 +24,19 @@ given (CommonTypes.InputPortId * CommonTypes.OutputPortId), render a wire of the
 #### DeleteWire functionality
 
 #### Defining Wire dataType, and conversion function from Issie Connection type -> Wire type
+
+
+#### Obtaining port coordinates and directions for wire rendering
+
+Use Port.portType as direction inference. Output means wire goes right from port, Input means wire goes left from port
+This can be changed to allow inputs and outputs on both sides in the group stage, by working with Symbol a bit.
+
+To get coordinates from ports, use interfacing function with Symbol similar to:
+
+let getPoints (PortTuple : (CommonTypes.InputPortId * CommonTypes.OutputPortId)) : (XYPos * XYPos)= 
+    //Interfacing function with symbol to get port coordinates of type XYPos from Port Id provided by sheet
+    let portOneCoords = Symbol.getPortCoords fst(PortTuple)
+    let portTwoCoords = Symbol.getPortCoords snd(PortTuple)
+    (portOneCoords,portTwoCoords)
+
+
