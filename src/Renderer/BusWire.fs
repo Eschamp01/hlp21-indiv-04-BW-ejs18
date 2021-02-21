@@ -24,22 +24,27 @@ open Helpers
 
 type Direction =  Left | Right
 
+(*
 type Wire = {
     Id: CommonTypes.ConnectionId 
     SrcSymbol: CommonTypes.ComponentId
     TargetSymbol: CommonTypes.ComponentId
     }
+*)
 
-(*
-    needs two port types defined to be able to test!
+    //needs two port types defined to be able to test!
 type Wire = {
     Id: CommonTypes.ConnectionId 
-    SrcPort: string //CommonTypes.Port.Id
-    TargetPort: string //CommonTypes.Port.Id
-    Color: CommonTypes.HighLightColor
-    //Width = 
+    //Remove SrcSymbol and TargetSymbol once port implementation is working
+    SrcSymbol: CommonTypes.ComponentId
+    TargetSymbol: CommonTypes.ComponentId
+    //SrcPort: InputPortId //CommonTypes.Port.Id OR InputPortId ?
+    //TargetPort: OutputPortId  //CommonTypes.Port.Id OR OutputPortId ?
+    //Color: CommonTypes.HighLightColor
+    //Width: CommonTypes.Width
+    //BoundingBoxes: BoundingBox list
     }
-*)
+
 
 type Model = {
     Symbol: Symbol.Model
@@ -67,23 +72,14 @@ let wire (wModel: Model) (wId: CommonTypes.ConnectionId): Wire =
     match result with
     | Some x -> x
     | _ -> failwithf "no Wire with this connectionId found in the Model"
-    (*
-    match wModel.WXelement.ConnectionId with
-    | wId -> return wire with Id, SrcSymbol and TargetSymbol of that element of WX
-    {
-        Id = wId
-        SrcSymbol = //Source ComponentId from ConnectionId and Model
-        TargetSymbol = //Target ComponentId from ConnectionId and Model
-    }
-    *)
+
 
 type WireRenderProps = {
     key : CommonTypes.ConnectionId
     WireP: Wire
     SrcP: XYPos 
     TgtP: XYPos
-    //SrcD: Direction // type Direction =  Left | Right -- uncomment once implemented
-    //TgtD: Direction
+    // PortType: PortType -- for direction
     ColorP: string
     StrokeWidthP: string
     }
@@ -102,12 +98,36 @@ let singleWireView =
                 // Qualify these props to avoid name collision with CSSProp
                 SVGAttr.Stroke props.ColorP
                 SVGAttr.StrokeWidth props.StrokeWidthP ] [])
-(*
-let wireVerticesList props = 
-    let Xs, Ys, Xt, Yt = props.SrcP.X, props.SrcP.Y, props.TgtP.X, props.TgtP.Y
-    [[(Xs, Ys);((Xs+Xt)/2.0, Ys)];[((Xs+Xt)/2.0, Ys);((Xs+Xt)/2.0, Yt)];[((Xs+Xt)/2.0, Yt);(Xt,Yt)]]
 
-let lineSegment (twoCoordList : XYPos*XYPos) = 
+
+let makeWireVerticesList props = 
+    let Xs, Ys, Xt, Yt = props.SrcP.X, props.SrcP.Y, props.TgtP.X, props.TgtP.Y
+    let list1 = [[(Xs, Ys);((Xs+Xt)/2.0, Ys)];[((Xs+Xt)/2.0, Ys);((Xs+Xt)/2.0, Yt)];[((Xs+Xt)/2.0, Yt);(Xt,Yt)]]
+    let list2 = [[(Xs, Ys);(Xs+30.0, Ys)];[(Xs+30.0, Ys);(Xs+30.0, (Ys+Yt)/2.0)];[(Xs+30.0, (Ys+Yt)/2.0);(Xt-30.0, (Ys+Yt)/2.0)];[(Xt-30.0, (Ys+Yt)/2.0);(Xt-30.0, Yt)];[(Xt-30.0, Yt);(Xt,Yt)]]
+    let list3 = [[(Xs, Ys);(Xs+30.0, Ys)];[(Xs+30.0, Ys);(Xs+30.0, Ys-50.0)];[(Xs+30.0, Ys-50.0);(Xt-30.0,Ys-50.0)];[(Xt-30.0,Ys-50.0);(Xt-30.0,Yt)];[(Xt-30.0,Yt);(Xt,Yt)]]
+    let list4 = [[(Xs, Ys);(Xs+30.0, Ys)];[(Xs+30.0, Ys);(Xs+30.0, Ys+50.0)];[(Xs+30.0, Ys+50.0);(Xt-30.0,Ys+50.0)];[(Xt-30.0,Ys+50.0);(Xt-30.0,Yt)];[(Xt-30.0,Yt);(Xt,Yt)]]
+    let list5 = [[(Xs, Ys);(Xs+30.0, Ys)];[(Xs+30.0, Ys);(Xs+30.0, Ys-50.0)];[(Xs+30.0, Ys-50.0);(Xs-50.0,Ys-50.0)];[(Xs-50.0,Ys-50.0);(Xs-50.0,Yt)];[(Xs-50.0,Yt);(Xt,Yt)]]
+    let list6 = [[(Xs, Ys);(Xs+30.0, Ys)];[(Xs+30.0, Ys);(Xs+30.0, Ys+50.0)];[(Xs+30.0, Ys+50.0);(Xs-50.0,Ys+50.0)];[(Xs-50.0,Ys+50.0);(Xs-50.0,Yt)];[(Xs-50.0,Yt);(Xt,Yt)]]
+    match (Xs-Xt)<(-40.0) with
+    | true -> list1
+    | _ -> 
+        match -80.0 > (Ys-Yt) with
+        |true -> list2
+        | _ -> 
+            match (Ys-Yt) < 0.0 with
+            | true -> 
+                match (Xs-Xt) > 20.0 || (Xs-Xt) < -100.0 with
+                | true -> list3
+                | _ -> list5
+            | _ -> 
+                match 80.0 < (Ys-Yt) with
+                | true -> list2
+                | _ -> 
+                    match (Xs-Xt) > 20.0 || (Xs-Xt) < -100.0 with
+                    | true -> list4
+                    | _ -> list6
+
+let lineSegment (twoCoordList : (float*float) list) = 
     let Xa, Ya, Xb, Yb = fst(twoCoordList.[0]), snd(twoCoordList.[0]), fst(twoCoordList.[1]), snd(twoCoordList.[1])
     line [
                 X1 Xa
@@ -117,14 +137,6 @@ let lineSegment (twoCoordList : XYPos*XYPos) =
                 // Qualify these props to avoid name collision with CSSProp
                 SVGAttr.Stroke "red"
                 SVGAttr.StrokeWidth "2px" ] []
-
-
-
-    //let wires =
-    //    model.WX
-    //    |> List.map ()
-
-*)
 
 let getPortCoords (portIds : (CommonTypes.InputPortId * CommonTypes.OutputPortId)) : (XYPos * XYPos) =
     failwithf "not implemented yet"
@@ -140,8 +152,8 @@ let view (model:Model) (dispatch: Dispatch<Msg>)=
         m
         |> Map.toList
         |> List.map (fun (x,y) -> y)
-
-    let wires = 
+    
+    let wireSegment n = 
         model.WX
         |> listValsFromMap
         |> List.map (fun w ->
@@ -152,32 +164,26 @@ let view (model:Model) (dispatch: Dispatch<Msg>)=
                 TgtP = Symbol. symbolPos model.Symbol w.TargetSymbol 
                 ColorP = model.Color.Text()
                 StrokeWidthP = "2px"}
-            singleWireView props)
-    let symbols = Symbol.view model.Symbol (fun sMsg -> dispatch (Symbol sMsg))
-    g [] [(g [] wires); symbols]
+            let wireVerticesList = makeWireVerticesList props
+            if wireVerticesList.Length > n then
+                Some (lineSegment wireVerticesList.[n])
+            else
+                None)
 
-    (*
     let wires = 
-        model.WX
-        |> List.map (fun w ->
-            let props = {
-                key = w.Id
-                WireP = w
-                SrcP = Symbol.symbolPos model.Symbol w.SrcSymbol 
-                TgtP = Symbol. symbolPos model.Symbol w.TargetSymbol 
-                ColorP = model.Color.Text()
-                StrokeWidthP = "2px" }
-            singleWireView props)
+        [0..4]
+        |> List.collect (fun n -> wireSegment n)
+        |> List.choose id
+
     let symbols = Symbol.view model.Symbol (fun sMsg -> dispatch (Symbol sMsg))
-    g [] [(g [] wires); symbols]
-    *)
+    g [] [(g [] wires);symbols]
 
 /// dummy init for testing: real init would probably start with no wires.
 /// this initialisation is not realistic - ports are not used
 /// this initialisation depends on details of Symbol.Model type.
 let init (n:int) () =
-    
     let symbols, cmd = Symbol.init()
+    
     let symIds = List.map (fun (sym:Symbol.Symbol) -> sym.Id) symbols //gets symbol Ids
     let n = symIds.Length
 
@@ -193,10 +199,10 @@ let init (n:int) () =
         List.map (fun i -> makeWire) [1..n]
         |> List.map (fun wire -> (wire.Id, wire))
         |> Map.ofList
-
-    let wxMapEmpty = Map.empty //use WX=wxMapEmpty below to initialise with no wires!
     
     {WX=wxMap;Symbol=symbols; Color=CommonTypes.Red},Cmd.none
+    
+    //{WX=Map.empty;Symbol=symbols; Color=CommonTypes.Red},Cmd.none //use this line and comment out the rest for no wires at start
     
 let update (msg : Msg) (model : Model): Model*Cmd<Msg> =
     match msg with

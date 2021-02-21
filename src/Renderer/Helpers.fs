@@ -16,6 +16,14 @@ type XYPos =
         Y : float
     }
 
+type BoundingBox = 
+    { 
+        X: float
+        Y: float
+        W: float
+        H: float
+    }
+
 type MouseOp = 
     /// button up
     | Up

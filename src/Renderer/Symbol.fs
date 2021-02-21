@@ -53,10 +53,10 @@ type Msg =
 
 
 
-let posDiff a b =
+let posDiff (a:XYPos) (b:XYPos) =
     {X=a.X-b.X; Y=a.Y-b.Y}
 
-let posAdd a b =
+let posAdd (a:XYPos) (b:XYPos) =
     {X=a.X+b.X; Y=a.Y+b.Y}
 
 let posOf x y = {X=x;Y=y}
