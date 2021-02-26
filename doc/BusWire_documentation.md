@@ -11,7 +11,7 @@ Given a single `BoundingBox`, returns a `CommomTypes.ConnectionId list` correspo
 
 3. `getConnectedWires (wModel:model) (compIdList:CommonTypes.ComponentId list) -> CommonTypes.ConnectionId list`
 
-Returns a `CommonTypes.ConnectionId list` corresponding to every `wire` in `wModel` which is connected to any of the components in `compIdList`.
+Returns a `CommonTypes.ConnectionId list` corresponding to every `wire` in `wModel` which is connected to any `component` in `compIdList`.
 
 #### BusWire Messages (Sent by Sheet)
 
