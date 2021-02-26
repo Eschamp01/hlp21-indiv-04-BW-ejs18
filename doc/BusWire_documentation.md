@@ -30,10 +30,13 @@ BusWire removes the wire corresponding to `CommonTypes.ConnectionId` from its mo
 
 #### BusWire to Symbol interfacing functions
 
-`let getPortLocations (PortTuple : (CommonTypes.InputPortId * CommonTypes.OutputPortId)) : (XYPos * XYPos)= 
-    let portOneCoords = Symbol.getPortCoords fst(PortTuple)
-    let portTwoCoords = Symbol.getPortCoords snd(PortTuple)
-    (portOneCoords,portTwoCoords)`
+`let getPortLocations (PortTuple : (CommonTypes.InputPortId * CommonTypes.OutputPortId)) : (XYPos * XYPos)= `
+
+    `let portOneCoords = Symbol.getPortCoords fst(PortTuple)`
+    
+    `let portTwoCoords = Symbol.getPortCoords snd(PortTuple)`
+    
+    `(portOneCoords,portTwoCoords)`
 
 
 Use Port.portType as direction inference. Output means wire goes right from port, Input means wire goes left from port.
