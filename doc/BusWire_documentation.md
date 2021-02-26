@@ -1,3 +1,18 @@
+#### BusWire Messages (Sent by Sheet)
+
+1. `AddWire of (CommonTypes.InputPortId * CommonTypes.OutputPortId)`
+
+Using the Ids of two ports, BusWire creates a new `wire` type, and adds it to its model.
+*(First, an interfacing function with symbol, Symbol.getPortLocations, must be called. This will return a type XYPos\*XYPos to work with)*
+
+2. `SelectWires of CommonTypes.ConnectionId list`
+
+BusWire changes the colour and/or width (depending on what looks best) of the wires corresponding to `CommonTypes.ConnectionId list`. All other `wire`s will be the default colour and their inferred width.
+
+3. `DeleteWires of CommonTypes.ConnectionId list`
+
+BusWire removes the wires corresponding to `CommonTypes.ConnectionId list` from its model.
+
 #### Sheet to BusWire Interfacing Functions
 
 1. `getWireIfClicked (wModel:Model) (pos:XYPos) : CommonTypes.ConnectionId option`
@@ -12,21 +27,6 @@ Given a single `BoundingBox`, returns a `CommomTypes.ConnectionId list` correspo
 3. `getConnectedWires (wModel:model) (compIdList:CommonTypes.ComponentId list) : CommonTypes.ConnectionId list`
 
 Returns a `CommonTypes.ConnectionId list` corresponding to every `wire` in `wModel` which is connected to any `component` in `compIdList`.
-
-#### BusWire Messages (Sent by Sheet)
-
-1. `AddWire of (CommonTypes.InputPortId * CommonTypes.OutputPortId)`
-
-Using the Ids of two ports, BusWire creates a new `wire` type, and adds it to its model.
-*(First, an interfacing function with symbol, Symbol.getPortLocations, must be called. This will return a type XYPos\*XYPos to work with)*
-
-2. `SelectWire of CommonTypes.ConnectionId list`
-
-BusWire changes the colour and/or width (depending on what looks best) of the wires corresponding to `CommonTypes.ConnectionId list`.
-
-3. `DeleteWire of CommonTypes.ConnectionId list`
-
-BusWire removes the wires corresponding to `CommonTypes.ConnectionId list` from its model.
 
 #### BusWire to Symbol interfacing functions
 
