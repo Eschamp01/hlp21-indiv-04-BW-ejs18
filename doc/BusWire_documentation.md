@@ -20,13 +20,13 @@ Returns a `CommonTypes.ConnectionId list` corresponding to every `wire` in `wMod
 Using the Ids of two ports, BusWire creates a new `wire` type, and adds it to its model.
 *(First, an interfacing function with symbol, Symbol.getPortLocations, must be called. This will return a type XYPos\*XYPos to work with)*
 
-2. `SelectWire of CommonTypes.ConnectionId`
+2. `SelectWire of CommonTypes.ConnectionId list`
 
-BusWire changes the colour and/or width (depending on what looks best) of the wire corresponding to `CommonTypes.ConnectionId`.
+BusWire changes the colour and/or width (depending on what looks best) of the wires corresponding to `CommonTypes.ConnectionId list`.
 
-3. `DeleteWire of CommonTypes.ConnectionId`
+3. `DeleteWire of CommonTypes.ConnectionId list`
 
-BusWire removes the wire corresponding to `CommonTypes.ConnectionId` from its model.
+BusWire removes the wires corresponding to `CommonTypes.ConnectionId list` from its model.
 
 #### BusWire to Symbol interfacing functions
 
