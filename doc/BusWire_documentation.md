@@ -7,7 +7,7 @@ Using the Ids of two ports, BusWire creates a new `wire` type, and adds it to it
 
 2. `SelectWires of CommonTypes.ConnectionId list`
 
-BusWire changes the colour and/or width (depending on what looks best) of the wires corresponding to `CommonTypes.ConnectionId list`. All other `wire`s will be the default colour and their inferred width.
+BusWire changes the colour of the `wire`s corresponding to `CommonTypes.ConnectionId list`. All other `wire`s in the model are set to their default colour.
 
 3. `DeleteWires of CommonTypes.ConnectionId list`
 
