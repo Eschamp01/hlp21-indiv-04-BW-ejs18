@@ -9,7 +9,7 @@ Returns `Some CommonTypes.ConnectionId` where `CommonTypes.ConnectionId` is the 
 
 Given a single `BoundingBox`, returns a `CommomTypes.ConnectionId list` corresponding to every `wire` in `wModel` that at least partially intersects the `BoundingBox`.
 
-3. `getConnectedWires (wModel:model) (compIdList:CommonTypes.ComponentId list) -> CommonTypes.ConnectionId list`
+3. `getConnectedWires (wModel:model) (compIdList:CommonTypes.ComponentId list) : CommonTypes.ConnectionId list`
 
 Returns a `CommonTypes.ConnectionId list` corresponding to every `wire` in `wModel` which is connected to any `component` in `compIdList`.
 
@@ -30,13 +30,10 @@ BusWire removes the wire corresponding to `CommonTypes.ConnectionId` from its mo
 
 #### BusWire to Symbol interfacing functions
 
-`let getPortLocations (PortTuple : (CommonTypes.InputPortId * CommonTypes.OutputPortId)) : (XYPos * XYPos)= `
-
-    `let portOneCoords = Symbol.getPortCoords fst(PortTuple)`
-    
-    `let portTwoCoords = Symbol.getPortCoords snd(PortTuple)`
-    
-    `(portOneCoords,portTwoCoords)`
+`let getPortLocations (portTuple : (CommonTypes.InputPortId * CommonTypes.OutputPortId)) : (XYPos * XYPos)= 
+    let portOneCoords = Symbol.getPortCoords fst(portTuple)
+    let portTwoCoords = Symbol.getPortCoords snd(portTuple)
+    (portOneCoords,portTwoCoords)`
 
 
 Use Port.portType as direction inference. Output means wire goes right from port, Input means wire goes left from port.
