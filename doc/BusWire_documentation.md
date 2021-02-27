@@ -43,5 +43,5 @@ Use Port.portType as direction inference. Output means wire goes right from port
 `getBoundingBoxes : Symbol.Model -> Map<CommonTypes.ComponentId, BoundingBox>`
 Symbol returns a map of all components and their respective bounding boxes.
 
-Universal type addition for all group members:
+__Universal type addition for all group members:__
 `type BoundingBox = { X: float; Y: float; W: float; H: float}`
