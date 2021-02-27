@@ -38,3 +38,10 @@ Returns a `CommonTypes.ConnectionId list` corresponding to every `wire` in `wMod
 
 Use Port.portType as direction inference. Output means wire goes right from port, Input means wire goes left from port.
 *(This can be changed to allow inputs and outputs on both sides in the group stage)*
+
+
+`getBoundingBoxes : Symbol.Model -> Map<CommonTypes.ComponentId, BoundingBox>`
+Symbol returns a map of all components and their respective bounding boxes.
+
+Universal type addition for all group members:
+`type BoundingBox = { X: float; Y: float; W: float; H: float}`
