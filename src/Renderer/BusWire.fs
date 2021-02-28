@@ -35,44 +35,6 @@ type Segment =
         HostId: CommonTypes.ConnectionId 
     }
 
-//let createSegment id startPos endPos dir = 
-//    {Id =id; Start = startPos; End = endPos; Dir = dir}
-
-//List.find (fun seg -> seg.Id = segId) segmentList
-
-
-(*
-type SegmentId = | SegmentId of string
-
-type Segment = 
-    {
-        Id: string
-        Dir: Direction
-        Start: XYPos
-        End: XYPos
-        PrevSegId: string option
-        NextSegId: string option
-    }
-
-let testSegment =
-    {
-        Id = "1"
-        Dir = H
-        Start = testStart
-        End = testEndH
-        PrevSegId = Some "0"
-        NextSegId = Some "2"
-    }
-*)
-
-(*
-type Wire = {
-    Id: CommonTypes.ConnectionId 
-    SrcSymbol: CommonTypes.ComponentId
-    TargetSymbol: CommonTypes.ComponentId
-    }
-*)
-
     //needs two port types defined to be able to test!
 type Wire = {
     Id: CommonTypes.ConnectionId 
@@ -265,40 +227,6 @@ let lineSegment (colour: string) (width: string) (twoCoordList : (float*float) l
                 SVGAttr.StrokeWidth width ] []
 
 
-//Addwire of (InputPordId * OutputPortId) implementation:
-
-//1. call symbol interfacing function Symbol.getInputPortLocation InputPortId and Symbol.getOutputPortLocation OutputPortId
-//These functions give type XYPos as output. Two dummy port locations are defined below:
-
-let testInputPortLocation = {X = 300.0; Y = 300.0} //Symbol.getInputPortLocation InputPortId
-let testOutputPortLocation = {X = 700.0; Y = 700.0} //Symbol.getOutputPortLocation OutputPortId
-
-//2. Create 
-
-let testStart = {X=2.0;Y=2.0}
-let testEndH = {X=9.0;Y=2.0}
-let testEndV = {X=2.0;Y=6.0}
-
-let testSegmentH = {Start = testStart ;End = testEndH; Dir = H; HostId = CommonTypes.ConnectionId (uuid())}
-let testSegmentV = {Start = testStart ;End = testEndV; Dir = V; HostId = CommonTypes.ConnectionId (uuid())}
-
-
-let getBoundingBox (seg:Segment) = 
-    match seg.Dir with
-    | H -> {X = seg.Start.X - 2.0; Y = seg.Start.Y - 2.0; W = seg.End.X - seg.Start.X + 4.0; H = 4.0}
-    | V -> {X = seg.Start.X - 2.0; Y = seg.Start.Y - 2.0; W = 4.0; H = seg.End.Y - seg.Start.Y + 4.0}
-    
-//getBoundingBox testSegmentV
-
-
-let boundingBoxesIntersect (bb1:BoundingBox) (bb2:BoundingBox) = 
-    if (bb1.X >= bb2.X + bb2.W) || (bb2.X >= bb1.X + bb1.W) then
-        false
-    else if (bb1.Y <= bb2.Y + bb2.H) || (bb2.Y <= bb1.Y + bb1.H) then
-        false
-    else
-        true
-
 let segIntersectsSeg (seg1Coords:XYPos*XYPos) (seg2Coords:XYPos*XYPos) : bool =
     let x1, x2, y1, y2, x3, x4, y3, y4 = fst(seg1Coords).X, snd(seg1Coords).X, fst(seg1Coords).Y, snd(seg1Coords).Y, fst(seg2Coords).X, snd(seg2Coords).X, fst(seg2Coords).Y, snd(seg2Coords).Y
     let uA = ((x4-x3)*(y1-y3) - (y4-y3)*(x1-x3)) / ((y4-y3)*(x2-x1) - (x4-x3)*(y2-y1))
@@ -343,8 +271,7 @@ let segPointDist (seg:Segment) (pos: XYPos) =
 
     (dx*dx + dy*dy)**0.5
 
-let pDist = segPointDist testSegmentH testInputPortLocation
-
+// test above function ---> let pDist = segPointDist testSegmentH testInputPortLocation
 
 
 let view (model:Model) (dispatch: Dispatch<Msg>)= 

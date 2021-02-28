@@ -31,7 +31,7 @@ module CommonTypes
         //IsDragging : bool
     }
 
-    //This width is for wire displaying, >8 buswires displayed with 8px thickness. Actual bitsize stored in Port type
+    //This width is for wire displaying, >8 buswires displayed with 8px thickness. Actual size stored in Port type
     type Width = One | Two | Three | Four | Five | Six | Seven | Eight
     with
         member this.Text() = // the match statement is used for performance
@@ -106,7 +106,7 @@ module CommonTypes
         Id : string
         Source : Port
         Target : Port
-        Vertices : (float * float) list
+        //Vertices : (float * float) list
     }
 
     /// F# data describing the contents of a single schematic sheet.
