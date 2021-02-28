@@ -20,7 +20,7 @@ BusWire removes the wires corresponding to `CommonTypes.ConnectionId list` from 
 Returns `Some CommonTypes.ConnectionId` where `CommonTypes.ConnectionId` is the Id of the closest `wire` in `wModel` to `pos`, providing `pos` is less than 3.0 pixels away from that `wire`.
 *(Closeness is defined by euclidean distance, and is calculated by using each wire `Segment`)*
 
-2. `getIntersectingWires: (wModel:Model) (selectBox:BoundingBox) : CommonTypes.ConnectionId list`
+2. `getIntersectingWires (wModel:Model) (selectBox:BoundingBox) : CommonTypes.ConnectionId list`
 
 Given a single `BoundingBox`, returns a `CommomTypes.ConnectionId list` corresponding to every `wire` in `wModel` that at least partially intersects the `BoundingBox`.
 
