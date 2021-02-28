@@ -98,6 +98,8 @@ let update (msg : Msg) (model : Model): Model*Cmd<Msg> =
     | KeyPress AltShiftZ -> 
         printStats() // print and reset the performance statistics in dev tools window
         model, Cmd.none // do nothing else and return model unchanged
+    | KeyPress _ -> model, Cmd.none
+    (*
     | KeyPress s -> // all other keys are turned into SetColor commands
         let c =
             match s with
@@ -107,9 +109,10 @@ let update (msg : Msg) (model : Model): Model*Cmd<Msg> =
             | _ -> CommonTypes.Grey
         printfn "Key:%A" c
         model, Cmd.ofMsg (Wire <| BusWire.SetColor c)
+    *)
 
 let init() = 
-    let model,cmds = (BusWire.init 400)()
+    let model,cmds = (BusWire.init 1)()
     {
         Wire = model
     }, Cmd.map Wire cmds

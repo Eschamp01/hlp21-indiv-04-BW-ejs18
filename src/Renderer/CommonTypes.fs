@@ -12,7 +12,7 @@ module CommonTypes
     type PortType = Input | Output
 
     /// A component I/O.
-    /// Id (like any other Id) is a string generated with 32 random hex charactes,
+    /// Id (like any other Id) is a string generated with 32 random hex characters,
     /// so it is (practically) globally unique. These Ids are used by the draw2d
     /// library to uniquely refer to ports and components. They are generated via:
     /// http://www.draw2d.org/draw2d_touch/jsdoc_6/#!/api/draw2d.util.UUID.
@@ -27,7 +27,24 @@ module CommonTypes
         PortNumber : int option
         PortType : PortType
         HostId : string
+        //Width: Width
+        //IsDragging : bool
     }
+
+    //This width is for wire displaying, >8 buswires displayed with 8px thickness. Actual bitsize stored in Port type
+    type Width = One | Two | Three | Four | Five | Six | Seven | Eight
+    with
+        member this.Text() = // the match statement is used for performance
+            match this with
+            | One -> "1px"
+            | Two -> "2px"
+            | Three -> "3px"
+            | Four -> "4px"
+            | Five -> "5px"
+            | Six -> "6px"
+            | Seven -> "7px"
+            | Eight -> "8px"
+    
 
     /// Name identified the LoadedComponent used.
     /// The labels define legends on symbol.
