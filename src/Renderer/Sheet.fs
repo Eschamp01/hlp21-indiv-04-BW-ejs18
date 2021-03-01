@@ -69,17 +69,24 @@ let displaySvgWithZoom (zoom:float) (svgReact: ReactElement) (dispatch: Dispatch
                     ] [str "BusWire Implementation Development"]
 
                     svgReact // the application code
-                    (*
+                    
                     polygon [ // a demo svg polygon triangle written on top of the application
-                        SVGAttr.Points "10,10 900,900 10,900"
-                        SVGAttr.StrokeWidth "5px"
+                        SVGAttr.Points "411,411 411,419 419,419"
+                        SVGAttr.StrokeWidth "1px"
                         SVGAttr.Stroke "Black"
                         SVGAttr.FillOpacity 0.1
                         SVGAttr.Fill "Blue"] []
-                    *)
+                    
                 ]
             ]
         ]
+
+let getConnectionIdList (startIndex:int) (endIndex:int) (model:Model) : CommonTypes.ConnectionId list = 
+    let allIdsList = 
+        model.Wire.WX
+        |> Map.toList
+        |> List.map (fun (x,y) -> x)
+    allIdsList.[startIndex .. endIndex]
 
 
 
@@ -98,7 +105,40 @@ let update (msg : Msg) (model : Model): Model*Cmd<Msg> =
     | KeyPress AltShiftZ -> 
         printStats() // print and reset the performance statistics in dev tools window
         model, Cmd.none // do nothing else and return model unchanged
+
+    //SelectWires and DeleteWires tests
+    (*
+    | KeyPress AltC -> 
+        let connectionIdList = getConnectionIdList 0 1 model
+        model, Cmd.ofMsg (Wire <| BusWire.SelectWires (connectionIdList))
+    | KeyPress AltV -> 
+        let connectionIdList = getConnectionIdList 2 3 model
+        model, Cmd.ofMsg (Wire <| BusWire.SelectWires (connectionIdList))
+    | KeyPress AltZ ->
+        let connectionIdList = getConnectionIdList 0 1 model
+        model, Cmd.ofMsg (Wire <| BusWire.DeleteWires connectionIdList)
+    *)
+
+    // AddWire test
+    | KeyPress AltC -> 
+        let sModel = model.Wire.Symbol
+        let componentOneId, componentTwoId = sModel.[2].Id, sModel.[3].Id
+        let componentIds = (componentOneId, componentTwoId)
+        model, Cmd.ofMsg (Wire <| BusWire.AddWire componentIds)
+    | KeyPress AltV -> 
+        let sModel = model.Wire.Symbol
+        let componentOneId, componentTwoId = sModel.[4].Id, sModel.[5].Id
+        let componentIds = (componentOneId, componentTwoId)
+        model, Cmd.ofMsg (Wire <| BusWire.AddWire componentIds)
+
+    | KeyPress DEL ->
+        let clickedWireOpt = BusWire.getWireIfClicked model.Wire {X=414.0;Y=414.0}
+        match clickedWireOpt with
+        | Some x -> model, Cmd.ofMsg (Wire <| BusWire.SelectWires [x])
+        | None -> model, Cmd.none
     | KeyPress _ -> model, Cmd.none
+
+    //KeyPress has specified values!!
     (*
     | KeyPress s -> // all other keys are turned into SetColor commands
         let c =
@@ -112,7 +152,7 @@ let update (msg : Msg) (model : Model): Model*Cmd<Msg> =
     *)
 
 let init() = 
-    let model,cmds = (BusWire.init 1)()
+    let model,cmds = (BusWire.init 0)()
     {
         Wire = model
     }, Cmd.map Wire cmds

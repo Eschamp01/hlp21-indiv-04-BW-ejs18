@@ -41,8 +41,8 @@ type Wire = {
     //Remove SrcSymbol and TargetSymbol once port implementation is working
     SrcSymbol: CommonTypes.ComponentId
     TargetSymbol: CommonTypes.ComponentId
-    //SrcPort: CommonTypes.InputPortId 
-    //TargetPort: CommonTypes.OutputPortId
+    SrcPort: CommonTypes.InputPortId 
+    TargetPort: CommonTypes.OutputPortId
     Color: CommonTypes.HighLightColor
     Width: CommonTypes.Width
     Segments: Segment list
@@ -63,7 +63,8 @@ type Model = {
 /// for highlighting, width inference, etc
 type Msg =
     | Symbol of Symbol.Msg
-    | AddWire of (CommonTypes.InputPortId * CommonTypes.OutputPortId)
+    //| AddWire of (CommonTypes.InputPortId * CommonTypes.OutputPortId)
+    | AddWire of (CommonTypes.ComponentId * CommonTypes.ComponentId)
     //| SetColor of CommonTypes.HighLightColor
     | MouseMsg of MouseT
     | DeleteWires of CommonTypes.ConnectionId list
@@ -79,7 +80,7 @@ let wire (wModel: Model) (wId: CommonTypes.ConnectionId): Wire =
 
 
 type WireRenderProps = {
-    //key : CommonTypes.ConnectionId
+    wId : CommonTypes.ConnectionId
     //WireP: Wire
     SrcP: XYPos 
     TgtP: XYPos
@@ -100,78 +101,6 @@ let removeFirstAndLast lst =
     |_ -> failwithf "no list found"
 
 
-(*
-let makeWire (portCoords:XYPos*XYPos) = 
-    let origin = {X=0.0;Y=0.0}
-    let nullSegment = {Start=origin;End=origin;Dir=H;HostId=CommonTypes.ConnectionId(uuid())}
-    let Xs, Ys, Xt, Yt = fst(portCoords).X, fst(portCoords).Y, snd(portCoords).X, snd(portCoords).Y
-    let lineCoordsList = 
-        let makeVertList =
-            if (Xs-Xt)<(-40.0) then
-                [(Xs,Ys);((Xs+Xt/2.0),Ys);((Xs+Xt/2.0),Yt);(Xt,Yt);(0.0,0.0);(0.0,0.0)]
-                //{nullSegment with HostId = w.Id};{Start={X=Xs;Y=Ys};End={X=(Xs+Xt)/2.0;Y=Ys};};{};{};{nullSegment with HostId = w.Id}
-            else if -80.0 > (Ys-Yt) then
-                [(Xs, Ys);(Xs+30.0, Ys);(Xs+30.0, (Ys+Yt)/2.0);(Xt-30.0, (Ys+Yt)/2.0);(Xt-30.0, Yt);(Xt,Yt)]
-            else if (Ys-Yt) < 0.0 then
-                if (Xs-Xt) > 20.0 || (Xs-Xt) < -100.0 then
-                    [(Xs, Ys);(Xs+30.0, Ys);(Xs+30.0, Ys-50.0);(Xt-30.0,Ys-50.0);(Xt-30.0,Yt);(Xt,Yt)]
-                else
-                    [(Xs, Ys);(Xs+30.0, Ys);(Xs+30.0, Ys-50.0);(Xs-50.0,Ys-50.0);(Xs-50.0,Yt);(Xt,Yt)]
-            else if 80.0 < (Ys-Yt) then
-                [(Xs, Ys);(Xs+30.0, Ys);(Xs+30.0, (Ys+Yt)/2.0);(Xt-30.0, (Ys+Yt)/2.0);(Xt-30.0, Yt);(Xt,Yt)]
-            else if (Xs-Xt) > 20.0 || (Xs-Xt) < -100.0 then
-                [(Xs, Ys);(Xs+30.0, Ys);(Xs+30.0, Ys+50.0);(Xt-30.0,Ys+50.0);(Xt-30.0,Yt);(Xt,Yt)]
-            else
-                [(Xs, Ys);(Xs+30.0, Ys);(Xs+30.0, Ys+50.0);(Xs-50.0,Ys+50.0);(Xs-50.0,Yt);(Xt,Yt)]
-        makeVertList
-        |> List.collect (fun x -> [x;x])
-        |> removeFirstAndLast
-        |> List.chunkBySize 2
-    let makeSegsFromLineList = 
-        lineCoordsList
-        |> List.map (fun (x,y))
-    |> List.map (fun x -> {Start=;End=;Dir=})
-*)
-
-let singleWireView = 
-    FunctionComponent.Of(
-        fun (props: WireRenderProps) ->
-            line [
-                X1 props.SrcP.X
-                Y1 props.SrcP.Y
-                X2 props.TgtP.X
-                Y2 props.TgtP.Y
-                // Qualify these props to avoid name collision with CSSProp
-                SVGAttr.Stroke props.ColorP
-                SVGAttr.StrokeWidth props.StrokeWidthP ] [])
-
-
-let makeWireVerticesList props = 
-    let Xs, Ys, Xt, Yt = props.SrcP.X, props.SrcP.Y, props.TgtP.X, props.TgtP.Y
-    let list1 = [[(Xs, Ys);((Xs+Xt)/2.0, Ys)];[((Xs+Xt)/2.0, Ys);((Xs+Xt)/2.0, Yt)];[((Xs+Xt)/2.0, Yt);(Xt,Yt)]]
-    let list2 = [[(Xs, Ys);(Xs+30.0, Ys)];[(Xs+30.0, Ys);(Xs+30.0, (Ys+Yt)/2.0)];[(Xs+30.0, (Ys+Yt)/2.0);(Xt-30.0, (Ys+Yt)/2.0)];[(Xt-30.0, (Ys+Yt)/2.0);(Xt-30.0, Yt)];[(Xt-30.0, Yt);(Xt,Yt)]]
-    let list3 = [[(Xs, Ys);(Xs+30.0, Ys)];[(Xs+30.0, Ys);(Xs+30.0, Ys-50.0)];[(Xs+30.0, Ys-50.0);(Xt-30.0,Ys-50.0)];[(Xt-30.0,Ys-50.0);(Xt-30.0,Yt)];[(Xt-30.0,Yt);(Xt,Yt)]]
-    let list4 = [[(Xs, Ys);(Xs+30.0, Ys)];[(Xs+30.0, Ys);(Xs+30.0, Ys+50.0)];[(Xs+30.0, Ys+50.0);(Xt-30.0,Ys+50.0)];[(Xt-30.0,Ys+50.0);(Xt-30.0,Yt)];[(Xt-30.0,Yt);(Xt,Yt)]]
-    let list5 = [[(Xs, Ys);(Xs+30.0, Ys)];[(Xs+30.0, Ys);(Xs+30.0, Ys-50.0)];[(Xs+30.0, Ys-50.0);(Xs-50.0,Ys-50.0)];[(Xs-50.0,Ys-50.0);(Xs-50.0,Yt)];[(Xs-50.0,Yt);(Xt,Yt)]]
-    let list6 = [[(Xs, Ys);(Xs+30.0, Ys)];[(Xs+30.0, Ys);(Xs+30.0, Ys+50.0)];[(Xs+30.0, Ys+50.0);(Xs-50.0,Ys+50.0)];[(Xs-50.0,Ys+50.0);(Xs-50.0,Yt)];[(Xs-50.0,Yt);(Xt,Yt)]]
-    match (Xs-Xt)<(-40.0) with
-    | true -> list1
-    | _ -> 
-        match -80.0 > (Ys-Yt) with
-        |true -> list2
-        | _ -> 
-            match (Ys-Yt) < 0.0 with
-            | true -> 
-                match (Xs-Xt) > 20.0 || (Xs-Xt) < -100.0 with
-                | true -> list3
-                | _ -> list5
-            | _ -> 
-                match 80.0 < (Ys-Yt) with
-                | true -> list2
-                | _ -> 
-                    match (Xs-Xt) > 20.0 || (Xs-Xt) < -100.0 with
-                    | true -> list4
-                    | _ -> list6
 
 let makeWireVerticesList2 (portCoords:XYPos*XYPos) = 
     let Xs, Ys, Xt, Yt = fst(portCoords).X, fst(portCoords).Y, snd(portCoords).X, snd(portCoords).Y
@@ -215,7 +144,7 @@ let makeSegmentsList (hostId:CommonTypes.ConnectionId) (portCoords: XYPos * XYPo
     makeSegmentFromVerticesList verticesList2
 
 
-let lineSegment (colour: string) (width: string) (twoCoordList : (float*float) list) = 
+let renderSegment (colour: string) (width: string) (twoCoordList : (float*float) list) = 
     let Xa, Ya, Xb, Yb = fst(twoCoordList.[0]), snd(twoCoordList.[0]), fst(twoCoordList.[1]), snd(twoCoordList.[1])
     line [
                 X1 Xa
@@ -273,6 +202,18 @@ let segPointDist (seg:Segment) (pos: XYPos) =
 
 // test above function ---> let pDist = segPointDist testSegmentH testInputPortLocation
 
+let updateWire (model:Model) = failwithf "not done"
+
+//IMPORTANT:
+//when a symbol moves:
+//make wires from symbol positions (symbol list)
+//make segmentList for wire connected to the symbol
+
+(*
+let updateWModelFromSymbols (wModel:Model) (sList:Symbol.Model) : Model = 
+    let updateWModelFromSymbol (symbol:Symbol) = 
+        wModel.WX.[symbol.Pos
+*)
 
 let view (model:Model) (dispatch: Dispatch<Msg>)= 
 
@@ -286,15 +227,16 @@ let view (model:Model) (dispatch: Dispatch<Msg>)=
         |> listValsFromMap
         |> List.map (fun w ->
             let props = {
-                //key = w.Id
+                wId = w.Id
                 //WireP = w
                 SrcP = Symbol.symbolPos model.Symbol w.SrcSymbol //change Symbol.symbolPos to Symbol.portPos or equivalent later
                 TgtP = Symbol. symbolPos model.Symbol w.TargetSymbol 
                 ColorP = w.Color.Text()
-                StrokeWidthP = "2px"}
-            let wireVerticesList = makeWireVerticesList props
+                StrokeWidthP = w.Width.Text()}
+            let wireVerticesList = makeWireVerticesList2 (props.SrcP,props.TgtP)
+            let segmentsList = makeSegmentsList props.wId (props.SrcP,props.TgtP)
             if wireVerticesList.Length > n then
-                Some (lineSegment props.ColorP props.StrokeWidthP wireVerticesList.[n])
+                Some (renderSegment props.ColorP props.StrokeWidthP wireVerticesList.[n])
             else
                 None)
 
@@ -317,12 +259,16 @@ let init (n:int) () =
 
     let makeWire (index:int)= 
         let s1,s2 = symbols.[2*index],symbols.[2*index+1]
+        let connectionId = CommonTypes.ConnectionId (uuid())
+        let segmentList = makeSegmentsList connectionId (s1.Pos,s2.Pos)
         {
-            Id=CommonTypes.ConnectionId (uuid())
+            Id = connectionId
             SrcSymbol = s1.Id
             TargetSymbol = s2.Id
-            Segments = List.empty
-            Color = CommonTypes.HighLightColor.Red
+            SrcPort = s1.InputPortId
+            TargetPort = s1.OutputPortId
+            Segments = segmentList
+            Color = CommonTypes.HighLightColor.Blue
             Width = CommonTypes.Width.Two
         }
     
@@ -341,19 +287,24 @@ let update (msg : Msg) (model : Model): Model*Cmd<Msg> =
         let sm,sCmd = Symbol.update sMsg model.Symbol
         {model with Symbol=sm}, Cmd.map Symbol sCmd
     
-    | AddWire (portIds:CommonTypes.InputPortId * CommonTypes.OutputPortId) ->
+    //| AddWire (portIds:CommonTypes.InputPortId * CommonTypes.OutputPortId) 
+    | AddWire (dummySymbolIds: CommonTypes.ComponentId * CommonTypes.ComponentId) ->
         //Symbol.getPortLocations(portIds) --> returns (XYPos * XYPos)
-        let dummyPortId1 = CommonTypes.ComponentId(uuid()) //actually component Ids, change this later (in group stage maybe)
-        let dummyPortId2 = CommonTypes.ComponentId(uuid())
+        let dummyPortLocations = ({X=100.0;Y=100.0},{X=800.0;Y=800.0})
+        let dummyPortIds = (CommonTypes.InputPortId(uuid()), CommonTypes.OutputPortId(uuid()))
+        let symbolOnePos = Symbol.symbolPos model.Symbol (fst(dummySymbolIds))
+        let symbolTwoPos = Symbol.symbolPos model.Symbol (snd(dummySymbolIds))
+        //let dummyPortId1 = CommonTypes.ComponentId(uuid()) //change component to port id in group stage
+        //let dummyPortId2 = CommonTypes.ComponentId(uuid())
         //let wireWidthFromSymbol = Symbol.checkPortWidths portIds //returns Some wireWidth if same width (Blue wire, Width=wireWidth), else None (Red wire, Width=One)
-        let wireWidthFromSymbol = Some 3
+        let wireWidthFromSymbol = Some 2
 
         let wireColour = 
             match wireWidthFromSymbol with
             | None -> CommonTypes.HighLightColor.Red
             | Some width -> 
                 if width <= 0 then
-                    CommonTypes.HighLightColor.Red //if wire width is less than 1, make wire red
+                    failwithf "wire width must be at least one!" //if wire width is less than 1, make wire red
                 else
                     CommonTypes.HighLightColor.Blue
             
@@ -375,13 +326,17 @@ let update (msg : Msg) (model : Model): Model*Cmd<Msg> =
             | None -> CommonTypes.Width.One
         //1. make wire type from two coordinates
         let hostId = CommonTypes.ConnectionId(uuid())
-        let portCoords = ({X=100.0;Y=100.0},{X=800.0;Y=800.0})
-        let segmentList = makeSegmentsList hostId portCoords
+        
+        //let segmentList = makeSegmentsList hostId dummyPortLocations
+        let segmentList = makeSegmentsList hostId (symbolOnePos,symbolTwoPos)
+
         let newWire = 
             {
                 Id=hostId
-                SrcSymbol=dummyPortId1 // fst(portIds)
-                TargetSymbol=dummyPortId2 // snd(portIds)
+                SrcSymbol=fst(dummySymbolIds) //dummyPortId1 // fst(portIds)
+                TargetSymbol=snd(dummySymbolIds) //dummyPortId2 // snd(portIds)
+                SrcPort = fst(dummyPortIds) //fst(portIds)//CHANGE THESE!
+                TargetPort = snd(dummyPortIds) //snd(portIds)
                 Color=wireColour
                 Width=wireWidth
                 Segments=segmentList
@@ -447,7 +402,7 @@ let getWireIfClicked (wModel: Model) (pos: XYPos) : CommonTypes.ConnectionId opt
             wModel.WX
             |> Map.toList
             |> List.map (fun (_,y) -> y)
-
+        
         let closestSegTuple = 
             wireList
             |> List.collect (fun x -> x.Segments)
@@ -456,9 +411,10 @@ let getWireIfClicked (wModel: Model) (pos: XYPos) : CommonTypes.ConnectionId opt
 
         //returns wire connectionId if within 3 pixels -- change value to change
         if snd(closestSegTuple) < 3.0 then
-            Some (fst(closestSegTuple)).HostId
+            Some ((fst(closestSegTuple)).HostId)
         else
             None
+        
 
 let getIntersectingWires (wModel:Model) (selectBox:BoundingBox) : CommonTypes.ConnectionId list = 
     let wireIntersectsBoundingBox (w:Wire) (bb:BoundingBox) = 
@@ -472,13 +428,13 @@ let getIntersectingWires (wModel:Model) (selectBox:BoundingBox) : CommonTypes.Co
     |> Map.filter (fun id boolVal -> boolVal)
     //3. take keys
     |> Map.toList
-    |> List.map (fun (x,y) -> x)
+    |> List.map (fun (id,bool) -> id)
 
 let getConnectedWires (wModel:Model) (compIdList:CommonTypes.ComponentId list) : CommonTypes.ConnectionId list =
     //1. Symbol.getPorts compIdList gives all portIds for the components given
     let portIdList = [CommonTypes.ComponentId(uuid());CommonTypes.ComponentId(uuid());CommonTypes.ComponentId(uuid())] //dummy
-    let conIdList = []
-    let rec getWiresFromAllPorts lst = 
+    let (conIdList: CommonTypes.ConnectionId list) = []
+    let rec getWiresFromAllPorts conIdList lst = 
         match lst with
         | h::t ->
             let tryGetWireFromPort = 
@@ -490,17 +446,18 @@ let getConnectedWires (wModel:Model) (compIdList:CommonTypes.ComponentId list) :
                         wireFromPort
                         |> Map.toList
                         |> List.map (fun (x,y) -> y)
+                        |> List.head // This implementation means only one wire can connect to one port, as decided.
                     Some getWire
             match tryGetWireFromPort with
             | Some wire -> 
-                let conIdList = conIdList @ wire
-                getWiresFromAllPorts t
+                let conIdList = conIdList @ [wire.Id]
+                getWiresFromAllPorts conIdList t
             | None -> 
-                getWiresFromAllPorts t
+                getWiresFromAllPorts conIdList t
         | [] -> conIdList
 
     portIdList
-    |> getWiresFromAllPorts
+    |> getWiresFromAllPorts conIdList
     |> List.distinct //connectionId list should have no repeat elements
 
 //----------------------interface to Issie-----------------------//

@@ -53,6 +53,7 @@ let getPoints (PortTuple : (CommonTypes.InputPortId * CommonTypes.OutputPortId))
 
 
 let segmentIdList = ["0";"1";"2";"3";"4"]
+segmentIdList.[1..3]
 let segId = "1"
 
 
@@ -130,3 +131,82 @@ let boundingBoxesIntersect (bb1:BoundingBox) (bb2:BoundingBox) =
     else
         true
 
+[1..1]
+
+
+(*
+let makeWire (portCoords:XYPos*XYPos) = 
+    let origin = {X=0.0;Y=0.0}
+    let nullSegment = {Start=origin;End=origin;Dir=H;HostId=CommonTypes.ConnectionId(uuid())}
+    let Xs, Ys, Xt, Yt = fst(portCoords).X, fst(portCoords).Y, snd(portCoords).X, snd(portCoords).Y
+    let lineCoordsList = 
+        let makeVertList =
+            if (Xs-Xt)<(-40.0) then
+                [(Xs,Ys);((Xs+Xt/2.0),Ys);((Xs+Xt/2.0),Yt);(Xt,Yt);(0.0,0.0);(0.0,0.0)]
+                //{nullSegment with HostId = w.Id};{Start={X=Xs;Y=Ys};End={X=(Xs+Xt)/2.0;Y=Ys};};{};{};{nullSegment with HostId = w.Id}
+            else if -80.0 > (Ys-Yt) then
+                [(Xs, Ys);(Xs+30.0, Ys);(Xs+30.0, (Ys+Yt)/2.0);(Xt-30.0, (Ys+Yt)/2.0);(Xt-30.0, Yt);(Xt,Yt)]
+            else if (Ys-Yt) < 0.0 then
+                if (Xs-Xt) > 20.0 || (Xs-Xt) < -100.0 then
+                    [(Xs, Ys);(Xs+30.0, Ys);(Xs+30.0, Ys-50.0);(Xt-30.0,Ys-50.0);(Xt-30.0,Yt);(Xt,Yt)]
+                else
+                    [(Xs, Ys);(Xs+30.0, Ys);(Xs+30.0, Ys-50.0);(Xs-50.0,Ys-50.0);(Xs-50.0,Yt);(Xt,Yt)]
+            else if 80.0 < (Ys-Yt) then
+                [(Xs, Ys);(Xs+30.0, Ys);(Xs+30.0, (Ys+Yt)/2.0);(Xt-30.0, (Ys+Yt)/2.0);(Xt-30.0, Yt);(Xt,Yt)]
+            else if (Xs-Xt) > 20.0 || (Xs-Xt) < -100.0 then
+                [(Xs, Ys);(Xs+30.0, Ys);(Xs+30.0, Ys+50.0);(Xt-30.0,Ys+50.0);(Xt-30.0,Yt);(Xt,Yt)]
+            else
+                [(Xs, Ys);(Xs+30.0, Ys);(Xs+30.0, Ys+50.0);(Xs-50.0,Ys+50.0);(Xs-50.0,Yt);(Xt,Yt)]
+        makeVertList
+        |> List.collect (fun x -> [x;x])
+        |> removeFirstAndLast
+        |> List.chunkBySize 2
+    let makeSegsFromLineList = 
+        lineCoordsList
+        |> List.map (fun (x,y))
+    |> List.map (fun x -> {Start=;End=;Dir=})
+*)
+
+//for a single straight wire
+(*
+let singleWireView = 
+    FunctionComponent.Of(
+        fun (props: WireRenderProps) ->
+            line [
+                X1 props.SrcP.X
+                Y1 props.SrcP.Y
+                X2 props.TgtP.X
+                Y2 props.TgtP.Y
+                // Qualify these props to avoid name collision with CSSProp
+                SVGAttr.Stroke props.ColorP
+                SVGAttr.StrokeWidth props.StrokeWidthP ] [])
+*)
+
+(*
+let makeWireVerticesList props = 
+    let Xs, Ys, Xt, Yt = props.SrcP.X, props.SrcP.Y, props.TgtP.X, props.TgtP.Y
+    let list1 = [[(Xs, Ys);((Xs+Xt)/2.0, Ys)];[((Xs+Xt)/2.0, Ys);((Xs+Xt)/2.0, Yt)];[((Xs+Xt)/2.0, Yt);(Xt,Yt)]]
+    let list2 = [[(Xs, Ys);(Xs+30.0, Ys)];[(Xs+30.0, Ys);(Xs+30.0, (Ys+Yt)/2.0)];[(Xs+30.0, (Ys+Yt)/2.0);(Xt-30.0, (Ys+Yt)/2.0)];[(Xt-30.0, (Ys+Yt)/2.0);(Xt-30.0, Yt)];[(Xt-30.0, Yt);(Xt,Yt)]]
+    let list3 = [[(Xs, Ys);(Xs+30.0, Ys)];[(Xs+30.0, Ys);(Xs+30.0, Ys-50.0)];[(Xs+30.0, Ys-50.0);(Xt-30.0,Ys-50.0)];[(Xt-30.0,Ys-50.0);(Xt-30.0,Yt)];[(Xt-30.0,Yt);(Xt,Yt)]]
+    let list4 = [[(Xs, Ys);(Xs+30.0, Ys)];[(Xs+30.0, Ys);(Xs+30.0, Ys+50.0)];[(Xs+30.0, Ys+50.0);(Xt-30.0,Ys+50.0)];[(Xt-30.0,Ys+50.0);(Xt-30.0,Yt)];[(Xt-30.0,Yt);(Xt,Yt)]]
+    let list5 = [[(Xs, Ys);(Xs+30.0, Ys)];[(Xs+30.0, Ys);(Xs+30.0, Ys-50.0)];[(Xs+30.0, Ys-50.0);(Xs-50.0,Ys-50.0)];[(Xs-50.0,Ys-50.0);(Xs-50.0,Yt)];[(Xs-50.0,Yt);(Xt,Yt)]]
+    let list6 = [[(Xs, Ys);(Xs+30.0, Ys)];[(Xs+30.0, Ys);(Xs+30.0, Ys+50.0)];[(Xs+30.0, Ys+50.0);(Xs-50.0,Ys+50.0)];[(Xs-50.0,Ys+50.0);(Xs-50.0,Yt)];[(Xs-50.0,Yt);(Xt,Yt)]]
+    match (Xs-Xt)<(-40.0) with
+    | true -> list1
+    | _ -> 
+        match -80.0 > (Ys-Yt) with
+        |true -> list2
+        | _ -> 
+            match (Ys-Yt) < 0.0 with
+            | true -> 
+                match (Xs-Xt) > 20.0 || (Xs-Xt) < -100.0 with
+                | true -> list3
+                | _ -> list5
+            | _ -> 
+                match 80.0 < (Ys-Yt) with
+                | true -> list2
+                | _ -> 
+                    match (Xs-Xt) > 20.0 || (Xs-Xt) < -100.0 with
+                    | true -> list4
+                    | _ -> list6
+*)

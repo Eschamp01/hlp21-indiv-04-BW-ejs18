@@ -18,12 +18,18 @@ open Helpers
 /// probably not be here, but looked up via some function
 /// from a more compact form, so that comparison of two Symbols to
 /// determine are they the same is fast.
+
+
+
+
 type Symbol =
     {
         Pos: XYPos
         LastDragPos : XYPos
         IsDragging : bool
         Id : CommonTypes.ComponentId
+        InputPortId : CommonTypes.InputPortId
+        OutputPortId : CommonTypes.OutputPortId
         //Component : CommonTypes.Component
     }
 
@@ -77,14 +83,16 @@ let createNewSymbol (pos:XYPos) =
         Pos = pos
         LastDragPos = {X=0. ; Y=0.} // initial value can always be this
         IsDragging = false // initial value can always be this
-        Id = CommonTypes.ComponentId (Helpers.uuid()) // create a unique id for this symbol
+        Id = CommonTypes.ComponentId (uuid()) // create a unique id for this symbol
+        InputPortId = CommonTypes.InputPortId (uuid())
+        OutputPortId = CommonTypes.OutputPortId (uuid())
         //Component = FILL IN LATER
     }
 
 
 /// Dummy function for test. The real init would probably have no symbols.
 let init () =
-    let testOneList = [(3,3);(11,4);(3,11);(11,10)]//List.allPairs [1..14] [1..14]
+    let testOneList = [(2,2);(6,5);(8,5);(12,2);(6,7);(2,10);(8,7);(12,10)]//List.allPairs [1..14] [1..14]
     testOneList
     |> List.map (fun (x,y) -> {X = float (x*64+30); Y=float (y*64+30)})
     |> List.map createNewSymbol
@@ -183,10 +191,10 @@ let private renderCircle =
                     )
                     Cx props.Circle.Pos.X
                     Cy props.Circle.Pos.Y
-                    R 20.
+                    R 5.
                     SVGAttr.Fill color
                     SVGAttr.Stroke color
-                    SVGAttr.StrokeWidth 1
+                    SVGAttr.StrokeWidth 2
                 ]
                 [ ]
     , "Circle"
