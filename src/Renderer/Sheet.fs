@@ -119,7 +119,8 @@ let update (msg : Msg) (model : Model): Model*Cmd<Msg> =
         model, Cmd.ofMsg (Wire <| BusWire.DeleteWires connectionIdList)
     *)
 
-    // AddWire test
+    // AddWire tests
+    (*
     | KeyPress AltC -> 
         let sModel = model.Wire.Symbol
         let componentOneId, componentTwoId = sModel.[2].Id, sModel.[3].Id
@@ -130,6 +131,12 @@ let update (msg : Msg) (model : Model): Model*Cmd<Msg> =
         let componentOneId, componentTwoId = sModel.[4].Id, sModel.[5].Id
         let componentIds = (componentOneId, componentTwoId)
         model, Cmd.ofMsg (Wire <| BusWire.AddWire componentIds)
+    | KeyPress AltZ -> 
+        let sModel = model.Wire.Symbol
+        let componentOneId, componentTwoId = sModel.[6].Id, sModel.[7].Id
+        let componentIds = (componentOneId, componentTwoId)
+        model, Cmd.ofMsg (Wire <| BusWire.AddWire componentIds)
+    *)
 
     | KeyPress DEL ->
         let clickedWireOpt = BusWire.getWireIfClicked model.Wire {X=414.0;Y=414.0}
@@ -152,7 +159,7 @@ let update (msg : Msg) (model : Model): Model*Cmd<Msg> =
     *)
 
 let init() = 
-    let model,cmds = (BusWire.init 0)()
+    let model,cmds = (BusWire.init 4)()
     {
         Wire = model
     }, Cmd.map Wire cmds

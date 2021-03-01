@@ -273,7 +273,7 @@ let init (n:int) () =
         }
     
     let wxMap = 
-        List.map (fun i -> makeWire i) [0..n]
+        List.map (fun i -> makeWire i) [0..n-1]
         |> List.map (fun wire -> (wire.Id, wire))
         |> Map.ofList
     
@@ -281,16 +281,16 @@ let init (n:int) () =
     
     //{WX=Map.empty;Symbol=symbols; Color=CommonTypes.Red},Cmd.none //use this line and comment out the rest for no wires at start
     
-let update (msg : Msg) (model : Model): Model*Cmd<Msg> =
+let update (msg : Msg) (symMsg:Symbol.Msg) (model : Model): Model*Cmd<Msg> =
     match msg with
     | Symbol sMsg -> 
         let sm,sCmd = Symbol.update sMsg model.Symbol
         {model with Symbol=sm}, Cmd.map Symbol sCmd
-    
+
     //| AddWire (portIds:CommonTypes.InputPortId * CommonTypes.OutputPortId) 
     | AddWire (dummySymbolIds: CommonTypes.ComponentId * CommonTypes.ComponentId) ->
         //Symbol.getPortLocations(portIds) --> returns (XYPos * XYPos)
-        let dummyPortLocations = ({X=100.0;Y=100.0},{X=800.0;Y=800.0})
+        //let dummyPortLocations = ({X=100.0;Y=100.0},{X=800.0;Y=800.0})
         let dummyPortIds = (CommonTypes.InputPortId(uuid()), CommonTypes.OutputPortId(uuid()))
         let symbolOnePos = Symbol.symbolPos model.Symbol (fst(dummySymbolIds))
         let symbolTwoPos = Symbol.symbolPos model.Symbol (snd(dummySymbolIds))
@@ -348,6 +348,7 @@ let update (msg : Msg) (model : Model): Model*Cmd<Msg> =
     | MouseMsg mMsg -> model, Cmd.ofMsg (Symbol (Symbol.MouseMsg mMsg))
 
     | SelectWires (connectionIds:CommonTypes.ConnectionId list) -> 
+    //SelectWires must select all wires in connectionIds, and also deselect all other wires.
         let allDeselectedMap = Map.map (fun id wire -> {wire with Color = CommonTypes.HighLightColor.Blue}) model.WX
         let allDeselectedModel = {model with WX=allDeselectedMap}
 
@@ -386,7 +387,6 @@ let update (msg : Msg) (model : Model): Model*Cmd<Msg> =
             |[] -> wModel.WX
         let wireDeletedMap = removeWireList model connectionIds
         {model with WX = wireDeletedMap}, Cmd.none
-
 
 //---------------Other interface functions--------------------//
 
@@ -432,7 +432,8 @@ let getIntersectingWires (wModel:Model) (selectBox:BoundingBox) : CommonTypes.Co
 
 let getConnectedWires (wModel:Model) (compIdList:CommonTypes.ComponentId list) : CommonTypes.ConnectionId list =
     //1. Symbol.getPorts compIdList gives all portIds for the components given
-    let portIdList = [CommonTypes.ComponentId(uuid());CommonTypes.ComponentId(uuid());CommonTypes.ComponentId(uuid())] //dummy
+    //let portIdList = [CommonTypes.ComponentId(uuid());CommonTypes.ComponentId(uuid());CommonTypes.ComponentId(uuid())] //dummy
+    //This implementation uses components as ports, change in group stage
     let (conIdList: CommonTypes.ConnectionId list) = []
     let rec getWiresFromAllPorts conIdList lst = 
         match lst with
@@ -456,7 +457,7 @@ let getConnectedWires (wModel:Model) (compIdList:CommonTypes.ComponentId list) :
                 getWiresFromAllPorts conIdList t
         | [] -> conIdList
 
-    portIdList
+    compIdList
     |> getWiresFromAllPorts conIdList
     |> List.distinct //connectionId list should have no repeat elements
 
